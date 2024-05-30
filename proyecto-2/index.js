@@ -1,4 +1,4 @@
-import './styles_pc-comp.css'
+import './styles.css'
 
 // Array de productos
 // Nombre, imagen, precio y oferta
@@ -452,18 +452,28 @@ function addHeaderMenuStylesChangeEvent() {
 }
 
 // Se añade el evento para, cuando cambie el vendedor del filtro, mostrar los productos coincidentes
+// También se hace la combinación con el filtro del precio, en función del precio introducido
 function addSellerFilterEvent() {
   const seller = document.querySelector('#seller')
   let filteredProducts
   const main = document.body.getElementsByTagName('main')[0]
 
   seller.addEventListener('change', function () {
+    const priceValue = parseFloat(document.querySelector('#price').value)
+
     if (seller.selectedIndex === 0) {
       filteredProducts = products
     } else {
       filteredProducts = products.filter(
         (product) =>
           product.seller === seller.options[seller.selectedIndex].value
+      )
+    }
+
+    // Se hace la combinación con el filtro del precio
+    if (!isNaN(priceValue) && priceValue !== 0) {
+      filteredProducts = filteredProducts.filter(
+        (product) => parseFloat(product.price) < priceValue
       )
     }
 
@@ -485,18 +495,28 @@ function addSellerFilterEvent() {
 }
 
 // Se añade el evento para mostrar los productos cuyo precio sea igual o inferior al del filtro del precio
+// También se hace la combinación con el filtro del vendedor, en función del vendedor seleccionado
 function addPriceFilterEvent() {
   let filteredProducts
   const main = document.body.getElementsByTagName('main')[0]
 
   document.querySelector('#buscar').addEventListener('click', function () {
     const priceValue = parseFloat(document.querySelector('#price').value)
+    const seller = document.querySelector('#seller')
 
-    if (priceValue === 0) {
+    if (isNaN(priceValue) || priceValue === 0) {
       filteredProducts = products
     } else {
       filteredProducts = products.filter(
         (product) => parseFloat(product.price) < priceValue
+      )
+    }
+
+    // Se hace la combinación con el filtro del vendedor
+    if (seller.selectedIndex !== 0) {
+      filteredProducts = filteredProducts.filter(
+        (product) =>
+          product.seller === seller.options[seller.selectedIndex].value
       )
     }
 
